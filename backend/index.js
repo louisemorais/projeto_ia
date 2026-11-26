@@ -4,7 +4,7 @@ import tarefasRouter from './src/router/tarefas.js'
 import database from './src/config/database.js';
 
 const app = express();
-app.use(express.json())
+app.use(express.json({ limit: '32kb' }))
 
 const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:8080,http://localhost:3000,http://localhost:5173')
     .split(',')
@@ -13,12 +13,15 @@ const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:8080,http:
 
 app.use((req, res, next) => {
     const origin = req.headers.origin
-    if (!origin || allowedOrigins.includes(origin)) {
-        if (origin) res.setHeader('Access-Control-Allow-Origin', origin)
-        res.setHeader('Vary', 'Origin')
-        res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-        res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
+    if (origin && !allowedOrigins.includes(origin)) {
+        res.status(403).json({ message: 'Origem não permitida' })
+        return
     }
+
+    if (origin) res.setHeader('Access-Control-Allow-Origin', origin)
+    res.setHeader('Vary', 'Origin')
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
+    res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS')
 
     if (req.method === 'OPTIONS') {
         res.status(204).end()

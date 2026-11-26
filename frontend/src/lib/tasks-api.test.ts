@@ -52,4 +52,10 @@ describe("API de tarefas", () => {
     });
     await expect(createTaskRequest(input)).rejects.toThrow("Prazo inválido");
   });
+
+  it("apresenta uma mensagem útil quando o servidor não responde", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockRejectedValue(new TypeError("Failed to fetch")));
+
+    await expect(getTasks()).rejects.toThrow("Não foi possível conectar ao servidor.");
+  });
 });

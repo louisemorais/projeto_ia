@@ -9,7 +9,11 @@ const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one :
 
 export function DeadlineNotice({ overdue, dueSoon }: DeadlineNoticeProps) {
   return (
-    <section aria-label="Avisos de vencimento" aria-live="polite" className="grid gap-2 sm:grid-cols-2">
+    <section
+      aria-label="Avisos de vencimento"
+      aria-live="polite"
+      className="grid gap-2 sm:grid-cols-2"
+    >
       {overdue > 0 && (
         <p className="flex items-start gap-3 rounded-lg border border-status-late/30 bg-status-late-soft px-4 py-3 text-sm text-status-late">
           <AlertTriangle className="mt-0.5 size-5 shrink-0" aria-hidden="true" />

@@ -58,8 +58,12 @@ describe("avisos de vencimento", () => {
   });
 
   it("não apresenta aviso para tarefa concluída", () => {
-    expect(getDeadlineAlert(task({ deadline: "2026-11-17", status: "concluida" }), today)).toBeNull();
-    expect(getDeadlineAlert(task({ deadline: "2026-11-18", status: "concluida" }), today)).toBeNull();
+    expect(
+      getDeadlineAlert(task({ deadline: "2026-11-17", status: "concluida" }), today),
+    ).toBeNull();
+    expect(
+      getDeadlineAlert(task({ deadline: "2026-11-18", status: "concluida" }), today),
+    ).toBeNull();
   });
 });
 
@@ -86,8 +90,29 @@ describe("filtros", () => {
 
 describe("cadastro e edição", () => {
   it("exige título, descrição, criador e prazo", () => {
-    const errors = validateTaskInput({ title: " ", description: "", createdBy: "", deadline: "" });
+    const errors = validateTaskInput({
+      title: " ",
+      description: "",
+      createdBy: "",
+      deadline: "",
+    });
     expect(Object.keys(errors).sort()).toEqual(["createdBy", "deadline", "description", "title"]);
+  });
+
+  it("rejeita datas inexistentes e campos acima do limite da API", () => {
+    expect(
+      validateTaskInput({
+        title: "A".repeat(201),
+        description: "B".repeat(10001),
+        createdBy: "C".repeat(121),
+        deadline: "2026-02-30",
+      }),
+    ).toEqual({
+      title: "O título deve ter no máximo 200 caracteres.",
+      description: "A descrição deve ter no máximo 10000 caracteres.",
+      createdBy: "O nome deve ter no máximo 120 caracteres.",
+      deadline: "Informe uma data válida.",
+    });
   });
 
   it("nova tarefa começa como Pendente com data de criação automática", () => {
@@ -104,7 +129,12 @@ describe("cadastro e edição", () => {
     const original = task({});
     const edited = updateTask(
       original,
-      { title: "Novo", description: "Nova", createdBy: "Bia", deadline: "2026-12-01" },
+      {
+        title: "Novo",
+        description: "Nova",
+        createdBy: "Bia",
+        deadline: "2026-12-01",
+      },
       "em_andamento",
     );
     expect(edited.createdAt).toBe(original.createdAt);

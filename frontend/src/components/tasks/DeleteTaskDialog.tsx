@@ -31,7 +31,10 @@ export function DeleteTaskDialog({ task, onCancel, onConfirm }: DeleteTaskDialog
         <AlertDialogFooter className="gap-2 sm:gap-0">
           <AlertDialogCancel className="h-10">Cancelar</AlertDialogCancel>
           <AlertDialogAction
-            className={buttonVariants({ variant: "destructive", className: "h-10" })}
+            className={buttonVariants({
+              variant: "destructive",
+              className: "h-10",
+            })}
             onClick={() => task && onConfirm(task)}
           >
             Excluir tarefa

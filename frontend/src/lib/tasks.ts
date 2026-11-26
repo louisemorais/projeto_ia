@@ -74,10 +74,31 @@ export function filterTasks(tasks: Task[], filter: StatusFilter, today: Date): T
 
 export function validateTaskInput(input: TaskInput): TaskInputErrors {
   const errors: TaskInputErrors = {};
-  if (!input.title.trim()) errors.title = "Informe o título da tarefa.";
-  if (!input.description.trim()) errors.description = "Informe a descrição da tarefa.";
-  if (!input.createdBy.trim()) errors.createdBy = "Informe o nome de quem criou a tarefa.";
-  if (!input.deadline.trim()) errors.deadline = "Informe a data do prazo.";
+  if (!input.title.trim()) {
+    errors.title = "Informe o título da tarefa.";
+  } else if (input.title.trim().length > 200) {
+    errors.title = "O título deve ter no máximo 200 caracteres.";
+  }
+  if (!input.description.trim()) {
+    errors.description = "Informe a descrição da tarefa.";
+  } else if (input.description.trim().length > 10000) {
+    errors.description = "A descrição deve ter no máximo 10000 caracteres.";
+  }
+  if (!input.createdBy.trim()) {
+    errors.createdBy = "Informe o nome de quem criou a tarefa.";
+  } else if (input.createdBy.trim().length > 120) {
+    errors.createdBy = "O nome deve ter no máximo 120 caracteres.";
+  }
+  if (!input.deadline.trim()) {
+    errors.deadline = "Informe a data do prazo.";
+  } else if (!/^\d{4}-\d{2}-\d{2}$/.test(input.deadline)) {
+    errors.deadline = "Informe uma data válida.";
+  } else {
+    const date = new Date(`${input.deadline}T00:00:00.000Z`);
+    if (Number.isNaN(date.getTime()) || date.toISOString().slice(0, 10) !== input.deadline) {
+      errors.deadline = "Informe uma data válida.";
+    }
+  }
   return errors;
 }
 

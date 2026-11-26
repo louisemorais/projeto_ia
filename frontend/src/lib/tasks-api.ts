@@ -1,6 +1,9 @@
 import type { StoredStatus, Task, TaskInput } from "./tasks";
 
-const API_URL = import.meta.env["VITE_API_URL"] ?? "http://localhost:3001/api";
+const API_URL = (import.meta.env["VITE_API_URL"] ?? "http://localhost:3001/api").replace(
+  /\/+$/,
+  "",
+);
 
 function normalizeTask(task: Task): Task {
   return { ...task, id: String(task.id) };
@@ -19,15 +22,35 @@ async function request<T>(path: string, options: RequestOptions = {}): Promise<T
     init.headers = { "Content-Type": "application/json" };
     init.body = JSON.stringify(options.body);
   }
-  const response = await fetch(`${API_URL}${path}`, init);
-
-  if (!response.ok) {
-    const payload = (await response.json()) as { message?: string };
-    throw new Error(payload.message ?? `A solicitação falhou (${response.status}).`);
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, init);
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") throw error;
+    throw new Error("Não foi possível conectar ao servidor.");
   }
 
   if (response.status === 204) return undefined as T;
-  return (await response.json()) as T;
+
+  const payload = await response.text();
+  let data: unknown = null;
+  if (payload) {
+    try {
+      data = JSON.parse(payload);
+    } catch {
+      data = null;
+    }
+  }
+
+  if (!response.ok) {
+    const message =
+      typeof data === "object" && data !== null && "message" in data
+        ? String((data as { message?: unknown }).message)
+        : null;
+    throw new Error(message || `A solicitação falhou (${response.status}).`);
+  }
+
+  return data as T;
 }
 
 export function getTasks(signal?: AbortSignal): Promise<Task[]> {
@@ -59,5 +82,7 @@ export function updateTaskStatusRequest(id: string, status: StoredStatus): Promi
 }
 
 export function deleteTaskRequest(id: string): Promise<void> {
-  return request<void>(`/tarefas/${encodeURIComponent(id)}`, { method: "DELETE" });
+  return request<void>(`/tarefas/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+  });
 }

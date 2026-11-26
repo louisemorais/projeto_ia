@@ -38,7 +38,10 @@ export const Route = createFileRoute("/")({
         content:
           "Organize suas tarefas de estudo da semana: cadastre atividades, acompanhe o status e veja os prazos.",
       },
-      { property: "og:title", content: "Estudo em Dia — Lista de tarefas de estudo" },
+      {
+        property: "og:title",
+        content: "Estudo em Dia — Lista de tarefas de estudo",
+      },
       {
         property: "og:description",
         content: "Organize suas tarefas de estudo da semana e acompanhe os prazos.",

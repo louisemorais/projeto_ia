@@ -30,7 +30,12 @@ import {
   type TaskInputErrors,
 } from "@/lib/tasks";
 
-const EMPTY: TaskInput = { title: "", description: "", createdBy: "", deadline: "" };
+const EMPTY: TaskInput = {
+  title: "",
+  description: "",
+  createdBy: "",
+  deadline: "",
+};
 const FIELD_ORDER: (keyof TaskInput)[] = ["title", "description", "createdBy", "deadline"];
 
 interface TaskFormDialogProps {
