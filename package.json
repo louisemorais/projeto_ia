@@ -1,0 +1,14 @@
+{
+  "name": "integracao-front-back",
+  "private": true,
+  "scripts": {
+    "install:frontend": "npm --prefix frontend install",
+    "install:backend": "npm --prefix backend install",
+    "install:all": "npm run install:frontend && npm run install:backend",
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "test:frontend": "npm --prefix frontend run test",
+    "lint:frontend": "npm --prefix frontend run lint"
+  }
+}
